@@ -294,6 +294,6 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref Service
+      FunctionName: !GetAtt Service.Arn
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws-execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/POST"
