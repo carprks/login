@@ -278,14 +278,22 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Join ['-', [!Ref ServiceName, lambda, !Ref Environment]]
-      Role: !GetAtt ServiceARN.Arn
+      Role: !Ref ServiceARN
       Runtime: go1.x
       Handler: !Ref ServiceName
       Environment:
         Variables:
-          DB_TABLE: !Sub arn:aws:dynamodb:${AWS::Region}:table/${Dynamo}
+          DB_TABLE: !Ref Dynamo
           DB_ENDPOINT: !Join ['', ['http://', 'dynamodb.', !Ref 'AWS::Region', '.amazonaws.com']]
           DB_REGION: !Ref AWS::Region
       Code:
         S3Bucket: !Ref BuildBucket
         S3Key: !Ref BuildKey
+
+  ServiceInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Service
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws-execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/POST"
