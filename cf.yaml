@@ -31,7 +31,7 @@ Resources:
         - AttributeName: identifier
           AttributeType: S
       KeySchema:
-        - AttributeName: identififer
+        - AttributeName: identifier
           KeyType: HASH
       ProvisionedThroughput:
         WriteCapacityUnits: 5
