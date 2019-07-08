@@ -278,7 +278,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Join ['-', [!Ref ServiceName, lambda, !Ref Environment]]
-      Role: !Ref ServiceARN
+      Role: !GetAtt ServiceARN.Arn
       Runtime: go1.x
       Handler: !Ref ServiceName
       Environment:
@@ -294,6 +294,6 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt Service.Arn
+      FunctionName: !Ref Service
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub "arn:aws-execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/POST"
