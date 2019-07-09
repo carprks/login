@@ -22,11 +22,13 @@ func RegisterService(body string) (string, error) {
 
 	// check the passwords are the same
 	if r.Password != r.Verify {
+		fmt.Println("Passwords dont match")
 		return "", fmt.Errorf("passwords don't match")
 	}
 
 	alreadyExists, err := r.CheckEmail()
 	if alreadyExists {
+		fmt.Println("account already exists")
 		return "", fmt.Errorf("email already exists")
 	}
 	if err != nil {
