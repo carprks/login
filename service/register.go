@@ -14,11 +14,13 @@ import (
 func RegisterService(body string) (string, error) {
 	r := Register{}
 
+	fmt.Println(fmt.Sprintf("Body: %v", body))
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("register unmarshall: %v", err))
 		return "", err
 	}
+	fmt.Println(fmt.Sprintf("R: %v", r))
 
 	// check the passwords are the same
 	if r.Password != r.Verify {
