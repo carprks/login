@@ -42,15 +42,15 @@ func RegisterService(body string) (string, error) {
 	r.Crypt = crypt
 
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("AWS_DB_REGION")),
-		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
+		Region: aws.String(os.Getenv("DB_REGION")),
+		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
 		return "", err
 	}
 	svc := dynamodb.New(s)
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
+		TableName: aws.String(os.Getenv("DB_TABLE")),
 		Item: map[string]*dynamodb.AttributeValue{
 			"identifier": {
 				S: aws.String(r.createIdentifier()),
@@ -97,15 +97,15 @@ func (r Register)createIdentifier() string {
 
 func (r Register)CheckEmail() (bool, error) {
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("AWS_DB_REGION")),
-		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
+		Region: aws.String(os.Getenv("DB_REGION")),
+		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
 		return false, err
 	}
 	svc := dynamodb.New(s)
 	input := &dynamodb.ScanInput{
-		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
+		TableName: aws.String(os.Getenv("DB_TABLE")),
 		FilterExpression: aws.String("Email = :email"),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":email": {
