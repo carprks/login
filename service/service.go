@@ -37,9 +37,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	message := Message{}
 
 	fmt.Println(fmt.Sprintf("Request: %v", request))
+	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
 
 	// Login
 	if request.Resource == "/login" {
+		fmt.Println("Start Login")
 		resp, err := LoginService(request.Body)
 		if err != nil {
 			fmt.Println(fmt.Sprintf("login service err: %v", err))
@@ -53,10 +55,12 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}
 
 		message.Message = string(r)
+		fmt.Println("End Login")
 	}
 
 	// Register
 	if request.Resource == "/register" {
+		fmt.Println("Start Register")
 		resp, err := RegisterService(request.Body)
 		if err != nil {
 			fmt.Println(fmt.Sprintf("register service err: %v", err))
@@ -70,6 +74,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}
 
 		message.Message = string(r)
+		fmt.Println("End Register")
 	}
 
 	// Marshall the message
