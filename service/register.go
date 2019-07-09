@@ -38,13 +38,14 @@ func RegisterService(body string) (string, error) {
 		return "", err
 	}
 
+	fmt.Println("Create Crypt")
 	crypt, err := HashPassword(r.Password)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("crypt password: %v", err))
 		return "", err
 	}
 	r.Crypt = crypt
-	fmt.Println("Crypt created")
+	fmt.Println("Created Crypt")
 
 	s, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("DB_REGION")),
