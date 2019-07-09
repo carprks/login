@@ -88,17 +88,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}, nil
 }
 
-func HashPassword(p string) (string, error) {
-	fmt.Println(fmt.Sprintf("Hash Password: %v", p))
-	r, err := bcrypt.GenerateFromPassword([]byte(p), 14)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("Hash err: %v", err))
-		return "", err
-	}
-	fmt.Println(fmt.Sprintf("Hash-- R: %v, RS: %v, Err: %v", r, string(r), err))
-	return string(r), err
-}
-
 func CheckPassword(p string, o string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(p), []byte(o))
 	return err == nil
