@@ -36,9 +36,6 @@ type Identity struct {
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	message := Message{}
 
-	fmt.Println(fmt.Sprintf("Request: %v", request))
-	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
-
 	// Login
 	if request.Resource == "/login" {
 		fmt.Println("Start Login")
