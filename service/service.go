@@ -90,7 +90,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 func HashPassword(p string) (string, error) {
 	fmt.Println(fmt.Sprintf("Hash Password: %v", p))
-	r, err := bcrypt.GenerateFromPassword([]byte(p), 14)
+	r, err := bcrypt.GenerateFromPassword([]byte(p), 10)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Hash err: %v", err))
 		return "", err
