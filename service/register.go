@@ -145,8 +145,10 @@ func (r Register)CheckEmail() (bool, error) {
 
 	fmt.Println(fmt.Sprintf("Result: %v", result))
 	if len(result.Items) >= 1 {
+		fmt.Println("something found")
 		return true, nil
 	}
 
+	fmt.Println("nothing found")
 	return false, nil
 }
