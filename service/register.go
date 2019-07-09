@@ -139,9 +139,11 @@ func (r Register)CheckEmail() (bool, error) {
 				return false, aerr
 			}
 		}
+		fmt.Println(fmt.Sprintf("really unknown: %v", err))
 		return false, err
 	}
 
+	fmt.Println(fmt.Sprintf("Result: %v", result))
 	if len(result.Items) >= 1 {
 		return true, nil
 	}
