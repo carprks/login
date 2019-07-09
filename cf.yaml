@@ -281,6 +281,7 @@ Resources:
       Role: !GetAtt ServiceARN.Arn
       Runtime: go1.x
       Handler: !Ref ServiceName
+      Timeout: 10
       Environment:
         Variables:
           DB_TABLE: !Ref Dynamo
