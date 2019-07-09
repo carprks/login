@@ -40,6 +40,7 @@ func RegisterService(body string) (string, error) {
 		return "", err
 	}
 	r.Crypt = crypt
+	fmt.Println("Crypt created")
 
 	s, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("DB_REGION")),
@@ -86,7 +87,7 @@ func RegisterService(body string) (string, error) {
 		}
 	}
 
-
+	fmt.Println(fmt.Sprintf("registered: %v", r))
 	return "registered", nil
 }
 
