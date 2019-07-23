@@ -20,8 +20,8 @@ func LoginService(body string) (string, error) {
 	}
 
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("AWS_DB_REGION")),
-		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
+		Region: aws.String(os.Getenv("DB_REGION")),
+		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
 		return "", err
@@ -38,7 +38,7 @@ func LoginService(body string) (string, error) {
 			},
 		},
 		FilterExpression: aws.String("#EMAIL = :email"),
-		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
+		TableName: aws.String(os.Getenv("DB_TABLE")),
 	}
 	result, err := svc.Scan(input)
 	if err != nil {
