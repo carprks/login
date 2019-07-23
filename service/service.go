@@ -7,11 +7,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Login ...
 type Login struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 }
 
+// Register ...
 type Register struct {
 	Email string `json:"email"`
 	Phone string `json:"phone"`
@@ -20,10 +22,12 @@ type Register struct {
 	Crypt string
 }
 
+// Message ...
 type Message struct {
 	Message string `json:"message"`
 }
 
+// Identity ...
 type Identity struct {
 	Ident struct {
 		ID string `json:"id"`
@@ -33,6 +37,7 @@ type Identity struct {
 	} `json:"identity"`
 }
 
+// Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	message := Message{}
 
@@ -88,6 +93,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}, nil
 }
 
+// HashPassword ...
 func HashPassword(p string) (string, error) {
 	fmt.Println(fmt.Sprintf("Hash Password: %v", p))
 	r, err := bcrypt.GenerateFromPassword([]byte(p), 10)
@@ -99,7 +105,8 @@ func HashPassword(p string) (string, error) {
 	return string(r), err
 }
 
-func CheckPassword(p string, o string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(p), []byte(o))
+// CheckPassword ...
+func CheckPassword(hashedPassword string, plainPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
 	return err == nil
 }

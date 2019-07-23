@@ -11,6 +11,7 @@ import (
 	"os"
 )
 
+// RegisterService ...
 func RegisterService(body string) (string, error) {
 	r := Register{}
 
@@ -99,6 +100,7 @@ func (r Register)createIdentifier() string {
 	return u.String()
 }
 
+// CheckEmail ...
 func (r Register)CheckEmail() (bool, error) {
 	s, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("DB_REGION")),

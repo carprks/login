@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// LoginService ...
 func LoginService(body string) (string, error) {
 	r := Login{}
 
@@ -20,7 +21,6 @@ func LoginService(body string) (string, error) {
 		fmt.Println(fmt.Sprintf("crypt password: %v", err))
 		return "", err
 	}
-	r.Crypt = crypt
 	fmt.Println("Created Crypt")
 
 	valid := CheckPassword(crypt, r.Password)
