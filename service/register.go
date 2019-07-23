@@ -95,11 +95,6 @@ func RegisterService(body string) (string, error) {
 	return "registered", nil
 }
 
-func (r Register)createIdentifier() string {
-	u := uuid.NewV5(uuid.NamespaceURL, fmt.Sprintf("https://identity.carprk.com/user/%s:%s", r.Email, r.Phone))
-	return u.String()
-}
-
 // CheckEmail ...
 func (r Register)CheckEmail() (bool, error) {
 	s, err := session.NewSession(&aws.Config{

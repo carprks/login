@@ -3,6 +3,10 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"os"
 )
 
 // LoginService ...
@@ -15,19 +19,47 @@ func LoginService(body string) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("Create Crypt")
-	crypt, err := HashPassword(r.Password)
+	s, err := session.NewSession(&aws.Config{
+		Region: aws.String(os.Getenv("AWS_DB_REGION")),
+		Endpoint: aws.String(os.Getenv("AWS_DB_ENDPOINT")),
+	})
 	if err != nil {
-		fmt.Println(fmt.Sprintf("crypt password: %v", err))
 		return "", err
 	}
-	fmt.Println("Created Crypt")
 
-	valid := CheckPassword(crypt, r.Password)
-	if valid {
-		return "success", nil
+	svc := dynamodb.New(s)
+	input := &dynamodb.ScanInput{
+		ExpressionAttributeNames: map[string]*string{
+			"#EMAIL": aws.String("email"),
+		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":email": {
+				S: aws.String(r.Email),
+			},
+		},
+		FilterExpression: aws.String("#EMAIL = :email"),
+		TableName: aws.String("AWS_DB_TABLE"),
+	}
+	result, err := svc.Scan(input)
+	if err != nil {
+		return "", err
+	}
+	if len(result.Items) != 1 {
+		return "", fmt.Errorf("no user, or more than 1")
 	}
 
+	crypt := ""
+	for key, value := range result.Items[0] {
+		switch key {
+		case "password":
+			crypt = *value.S
+		}
+	}
 
-	return "", nil
+	valid := CheckPassword(crypt, r.Password)
+	if !valid {
+		return "", fmt.Errorf("invalid password")
+	}
+
+	return "success", nil
 }
