@@ -103,8 +103,6 @@ Resources:
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
       HttpMethod: GET
-      RequestParameters:
-        method.request.header.X-Authorization: true
       Integration:
         Type: MOCK
         RequestTemplates:
@@ -132,8 +130,6 @@ Resources:
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
       HttpMethod: POST
-      RequestParameters:
-        method.request.header.X-Authorization: true
       MethodResponses:
         - StatusCode: 200
           ResponseModels:
@@ -182,8 +178,6 @@ Resources:
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
       HttpMethod: POST
-      RequestParameters:
-        method.request.header.X-Authorization: true
       MethodResponses:
         - StatusCode: 200
           ResponseModels:
