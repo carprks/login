@@ -38,7 +38,7 @@ func LoginService(body string) (string, error) {
 			},
 		},
 		FilterExpression: aws.String("#EMAIL = :email"),
-		TableName: aws.String("AWS_DB_TABLE"),
+		TableName: aws.String(os.Getenv("AWS_DB_TABLE")),
 	}
 	result, err := svc.Scan(input)
 	if err != nil {
