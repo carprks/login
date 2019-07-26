@@ -13,7 +13,7 @@ import (
 
 // RegisterService ...
 func RegisterService(body string) (string, error) {
-	r := Register{}
+	r := RegisterRequest{}
 
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
@@ -95,13 +95,13 @@ func RegisterService(body string) (string, error) {
 	return "registered", nil
 }
 
-func (r Register)createIdentifier() string {
+func (r RegisterRequest)createIdentifier() string {
 	u := uuid.NewV5(uuid.NamespaceURL, fmt.Sprintf("https://identity.carprk.com/user/%s:%s", r.Email, r.Phone))
 	return u.String()
 }
 
 // CheckEmail ...
-func (r Register)CheckEmail() (bool, error) {
+func (r RegisterRequest)CheckEmail() (bool, error) {
 	s, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
