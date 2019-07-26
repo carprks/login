@@ -11,7 +11,7 @@ import (
 
 // LoginService ...
 func LoginService(body string) (string, error) {
-	r := Login{}
+	r := LoginRequest{}
 
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
@@ -48,12 +48,17 @@ func LoginService(body string) (string, error) {
 		return "", fmt.Errorf("no user, or more than 1")
 	}
 
+	l := Login{}
+
 	crypt := ""
 	for key, value := range result.Items[0] {
 		switch key {
 		case "password":
 			crypt = *value.S
+    case "identifier":
+      l.ID = *value.S
 		}
+
 	}
 
 	valid := CheckPassword(crypt, r.Password)
@@ -61,5 +66,10 @@ func LoginService(body string) (string, error) {
 		return "", fmt.Errorf("invalid password")
 	}
 
-	return "success", nil
+	resp, err := json.Marshal(l)
+	if err != nil {
+	  return "", err
+  }
+
+	return string(resp), nil
 }

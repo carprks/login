@@ -9,12 +9,17 @@ import (
 
 // Login ...
 type Login struct {
+  ID string `json:"id"`
+}
+
+// LoginRequest ...
+type LoginRequest struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 }
 
-// Register ...
-type Register struct {
+// RegisterRequest ...
+type RegisterRequest struct {
 	Email string `json:"email"`
 	Phone string `json:"phone"`
 	Password string `json:"password"`
