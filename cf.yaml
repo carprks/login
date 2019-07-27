@@ -136,7 +136,9 @@ Resources:
             application/json: !Ref EmptyModel
       Integration:
         Type: AWS
-        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service::Arn}/invocations
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
+          - {SARN: !Ref Service }
         IntegrationHttpMethod: POST
 
 #  RestAPIVerify:
@@ -184,7 +186,9 @@ Resources:
             application/json: !Ref EmptyModel
       Integration:
         Type: AWS
-        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service::Arn}/invocations
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
+          - {SARN: !Ref Service }
         IntegrationHttpMethod: POST
 
   RestAPIDeployment:
