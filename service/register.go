@@ -7,64 +7,88 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/satori/go.uuid"
+	"github.com/joho/godotenv"
 	"os"
 )
 
-// RegisterService ...
-func RegisterService(body string) (string, error) {
+func register(body string) (string, error) {
 	r := RegisterRequest{}
-
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("register unmarshall: %v", err))
 		return "", err
+	}
+
+  if os.Getenv("DEVELOPMENT") == "" {
+    if r.Email == "tester@carpark.ninja" {
+      return "", fmt.Errorf("tester account not allowed in production")
+    }
+  }
+
+	resp, err := r.Register()
+	if err != nil {
+		fmt.Println(fmt.Sprintf("register service err: %v", err))
+		return "", err
+	}
+
+	res, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("register marshall: %v", err))
+		return "", err
+	}
+
+	return string(res), nil
+}
+
+// Register ...
+func (r RegisterRequest) Register() (Register, error) {
+	if len(os.Args) >= 1 {
+		if os.Args[2] == "localDev" {
+			err := godotenv.Load()
+			if err != nil {
+				fmt.Println(fmt.Sprintf("godotenv err: %v", err))
+			}
+		}
 	}
 
 	// check the passwords are the same
 	if r.Password != r.Verify {
 		fmt.Println("Passwords dont match")
-		return "", fmt.Errorf("passwords don't match")
+		return Register{}, fmt.Errorf("passwords don't match")
 	}
 
 	alreadyExists, err := r.CheckEmail()
 	if alreadyExists {
 		fmt.Println("account already exists")
-		return "", fmt.Errorf("email already exists")
+		return Register{}, fmt.Errorf("email already exists")
 	}
 	if err != nil {
 		fmt.Println(fmt.Sprintf("check email: %v", err))
-		return "", err
+		return Register{}, err
 	}
 
-	fmt.Println("Create Crypt")
 	crypt, err := HashPassword(r.Password)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("crypt password: %v", err))
-		return "", err
+		return Register{}, err
 	}
 	r.Crypt = crypt
-	fmt.Println("Created Crypt")
 
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("DB_REGION")),
+		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
-		return "", err
+		return Register{}, err
 	}
 	svc := dynamodb.New(s)
 	input := &dynamodb.PutItemInput{
 		TableName: aws.String(os.Getenv("DB_TABLE")),
 		Item: map[string]*dynamodb.AttributeValue{
 			"identifier": {
-				S: aws.String(r.createIdentifier()),
+				S: aws.String(GenerateIdent(r.Email)),
 			},
 			"email": {
 				S: aws.String(r.Email),
-			},
-			"phone": {
-				S: aws.String(r.Phone),
 			},
 			"password": {
 				S: aws.String(r.Crypt),
@@ -80,30 +104,27 @@ func RegisterService(body string) (string, error) {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case dynamodb.ErrCodeConditionalCheckFailedException:
-				return "", fmt.Errorf("ErrCodeConditionalCheckFailedException: %v", aerr)
+				return Register{}, fmt.Errorf("ErrCodeConditionalCheckFailedException: %v", aerr)
 			case "ValidationException":
 				fmt.Println(fmt.Sprintf("validation err reason: %v", input))
-				return "", fmt.Errorf("validation error: %v", aerr)
+				return Register{}, fmt.Errorf("validation error: %v", aerr)
 			default:
 				fmt.Println(fmt.Sprintf("unknown code err reason: %v", input))
-				return "", fmt.Errorf("unknown code err: %v", aerr)
+				return Register{}, fmt.Errorf("unknown code err: %v", aerr)
 			}
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("registered: %v", r))
-	return "registered", nil
-}
-
-func (r RegisterRequest)createIdentifier() string {
-	u := uuid.NewV5(uuid.NamespaceURL, fmt.Sprintf("https://identity.carprk.com/user/%s:%s", r.Email, r.Phone))
-	return u.String()
+	return Register{
+		ID:    GenerateIdent(r.Email),
+		Email: r.Email,
+	}, nil
 }
 
 // CheckEmail ...
-func (r RegisterRequest)CheckEmail() (bool, error) {
+func (r RegisterRequest) CheckEmail() (bool, error) {
 	s, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("DB_REGION")),
+		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	})
 	if err != nil {
@@ -111,7 +132,7 @@ func (r RegisterRequest)CheckEmail() (bool, error) {
 	}
 	svc := dynamodb.New(s)
 	input := &dynamodb.ScanInput{
-		TableName: aws.String(os.Getenv("DB_TABLE")),
+		TableName:        aws.String(os.Getenv("DB_TABLE")),
 		FilterExpression: aws.String("Email = :email"),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":email": {
@@ -144,12 +165,10 @@ func (r RegisterRequest)CheckEmail() (bool, error) {
 		return false, err
 	}
 
-	fmt.Println(fmt.Sprintf("Result: %v", result))
 	if len(result.Items) >= 1 {
 		fmt.Println("something found")
 		return true, nil
 	}
 
-	fmt.Println("nothing found")
 	return false, nil
 }

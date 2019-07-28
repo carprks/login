@@ -1,41 +1,45 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/aws/aws-lambda-go/events"
-	"golang.org/x/crypto/bcrypt"
+  "fmt"
+  "github.com/aws/aws-lambda-go/events"
+  uuid "github.com/satori/go.uuid"
+  "golang.org/x/crypto/bcrypt"
 )
 
 // Login ...
 type Login struct {
-  ID string `json:"id"`
+	ID      string `json:"id"`
+	Success bool   `json:"success"`
+	Error   error  `json:"error,omitempty"`
 }
 
 // LoginRequest ...
 type LoginRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 // RegisterRequest ...
 type RegisterRequest struct {
-	Email string `json:"email"`
-	Phone string `json:"phone"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
 	Password string `json:"password"`
-	Verify string `json:"verify"`
-	Crypt string
+	Verify   string `json:"verify"`
+	Crypt    string `json:"crypt,-"`
 }
 
-// Message ...
-type Message struct {
-	Message string `json:"message"`
+// Register ...
+type Register struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Error error  `json:"error,omitempty"`
 }
 
 // Identity ...
 type Identity struct {
 	Ident struct {
-		ID string `json:"id"`
+		ID            string `json:"id"`
 		Registrations []struct {
 			Plate string `json:"plate"`
 		} `json:"registrations"`
@@ -44,69 +48,45 @@ type Identity struct {
 
 // Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	message := Message{}
-
 	// Login
 	if request.Resource == "/login" {
-		fmt.Println("Start Login")
-		resp, err := LoginService(request.Body)
+		resp, err := login(request.Body)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("login service err: %v", err))
 			return events.APIGatewayProxyResponse{}, err
 		}
 
-		r, err := json.Marshal(resp)
-		if err != nil {
-			fmt.Println(fmt.Sprintf("login marshall: %v", err))
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		message.Message = string(r)
-		fmt.Println("End Login")
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Body:       resp,
+		}, nil
 	}
 
 	// Register
 	if request.Resource == "/register" {
-		fmt.Println("Start Register")
-		resp, err := RegisterService(request.Body)
+		resp, err := register(request.Body)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("register service err: %v", err))
 			return events.APIGatewayProxyResponse{}, err
 		}
 
-		r, err := json.Marshal(resp)
-		if err != nil {
-			fmt.Println(fmt.Sprintf("register marshall: %v", err))
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		message.Message = string(r)
-		fmt.Println("End Register")
-	}
-
-	// Marshall the message
-	m, err := json.Marshal(message)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("message marshall: %v", err))
-		return events.APIGatewayProxyResponse{}, err
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Body:       resp,
+		}, nil
 	}
 
 	// Return the message
 	return events.APIGatewayProxyResponse{
-		Body: string(m),
-		StatusCode: 200,
+		StatusCode: 400,
 	}, nil
 }
 
 // HashPassword ...
 func HashPassword(p string) (string, error) {
-	fmt.Println(fmt.Sprintf("Hash Password: %v", p))
 	r, err := bcrypt.GenerateFromPassword([]byte(p), 10)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Hash err: %v", err))
 		return "", err
 	}
-	fmt.Println(fmt.Sprintf("Hash-- R: %v, RS: %v, Err: %v", r, string(r), err))
 	return string(r), err
 }
 
@@ -114,4 +94,10 @@ func HashPassword(p string) (string, error) {
 func CheckPassword(hashedPassword string, plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
 	return err == nil
+}
+
+// GenerateIdent ...
+func GenerateIdent(email string) string {
+	u := uuid.NewV5(uuid.NamespaceURL, fmt.Sprintf("https://identity.carprk.com/user/%s", email))
+	return u.String()
 }
