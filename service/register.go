@@ -1,14 +1,13 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/joho/godotenv"
-	"os"
+  "encoding/json"
+  "fmt"
+  "github.com/aws/aws-sdk-go/aws"
+  "github.com/aws/aws-sdk-go/aws/awserr"
+  "github.com/aws/aws-sdk-go/aws/session"
+  "github.com/aws/aws-sdk-go/service/dynamodb"
+  "os"
 )
 
 func register(body string) (string, error) {
@@ -41,15 +40,6 @@ func register(body string) (string, error) {
 
 // Register ...
 func (r RegisterRequest) Register() (Register, error) {
-	if len(os.Args) >= 1 {
-		if os.Args[2] == "localDev" {
-			err := godotenv.Load()
-			if err != nil {
-				fmt.Println(fmt.Sprintf("godotenv err: %v", err))
-			}
-		}
-	}
-
 	// check the passwords are the same
 	if r.Password != r.Verify {
 		fmt.Println("Passwords dont match")
