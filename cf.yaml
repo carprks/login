@@ -134,6 +134,9 @@ Resources:
         - StatusCode: 200
           ResponseModels:
             application/json: !Ref EmptyModel
+        - StatusCode: 502
+          ResponseModels:
+            application/json: !Ref EmptyModel
       Integration:
         Type: AWS
         Uri: !Sub
@@ -182,6 +185,9 @@ Resources:
       HttpMethod: POST
       MethodResponses:
         - StatusCode: 200
+          ResponseModels:
+            application/json: !Ref EmptyModel
+        - StatusCode: 502
           ResponseModels:
             application/json: !Ref EmptyModel
       Integration:
