@@ -14,20 +14,40 @@ func register(body string) (string, error) {
 	r := RegisterRequest{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-		return "", err
+	  fmt.Println(fmt.Sprintf("register request err: %v", err))
+    res, err := json.Marshal(Register{
+      Error: err,
+    })
+    if err != nil {
+      return "", err
+    }
+    return string(res), nil
 	}
 
   if os.Getenv("DEVELOPMENT") == "" {
     if r.Email == "tester@carpark.ninja" {
-      return "", fmt.Errorf("tester account not allowed in production")
+      fmt.Println(fmt.Sprintf("tester account not allowed"))
+      res, err := json.Marshal(Register{
+        Error:   fmt.Errorf("tester account not allowed in production"),
+      })
+      if err != nil {
+        return "", err
+      }
+      return string(res), nil
     }
   }
 
 	resp, err := r.Register()
-	if err != nil {
-		fmt.Println(fmt.Sprintf("register service err: %v", err))
-		return "", err
-	}
+  if err != nil {
+    fmt.Println(fmt.Sprintf("register service err: %v", err))
+    res, err := json.Marshal(Register{
+      Error: err,
+    })
+    if err != nil {
+      return "", err
+    }
+    return string(res), nil
+  }
 
 	res, err := json.Marshal(resp)
 	if err != nil {
