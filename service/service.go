@@ -9,9 +9,8 @@ import (
 
 // Login ...
 type Login struct {
-	ID      string `json:"id"`
-	Success bool   `json:"success"`
-	Error   error  `json:"error,omitempty"`
+	ID      string `json:"id,omitempty"`
+	Error   string  `json:"error,omitempty"`
 }
 
 // LoginRequest ...
@@ -31,19 +30,9 @@ type RegisterRequest struct {
 
 // Register ...
 type Register struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
-	Error error  `json:"error,omitempty"`
-}
-
-// Identity ...
-type Identity struct {
-	Ident struct {
-		ID            string `json:"id"`
-		Registrations []struct {
-			Plate string `json:"plate"`
-		} `json:"registrations"`
-	} `json:"identity"`
+	ID    string `json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
+	Error string  `json:"error,omitempty"`
 }
 
 // Handler ...

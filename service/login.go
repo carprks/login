@@ -13,10 +13,8 @@ func login(body string) (string, error) {
 	r := LoginRequest{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-	  fmt.Println(fmt.Sprintf("login request err: %v", err))
     res, err := json.Marshal(Login{
-      Success: false,
-      Error:   err,
+      Error:   err.Error(),
     })
     if err != nil {
       return "", err
@@ -26,10 +24,8 @@ func login(body string) (string, error) {
 
 	if os.Getenv("DEVELOPMENT") == "" {
 	  if r.Email == "tester@carpark.ninja" {
-	    fmt.Println(fmt.Sprintf("tester account not allowed in production"))
 	    res, err := json.Marshal(Login{
-        Success: false,
-        Error:   fmt.Errorf("tester account not allowed in production"),
+        Error:   fmt.Errorf("tester account not allowed in production").Error(),
       })
 	    if err != nil {
 	      return "", err
@@ -40,10 +36,8 @@ func login(body string) (string, error) {
 
 	resp, err := r.Login()
 	if err != nil {
-	  fmt.Println(fmt.Sprintf("login service err: %v", err))
     res, err := json.Marshal(Login{
-      Success: false,
-      Error:   err,
+      Error:   err.Error(),
     })
     if err != nil {
       return "", err
@@ -90,7 +84,6 @@ func (r LoginRequest) Login() (Login, error) {
 	}
 
 	return Login{
-		Success: true,
 		ID:      *result.Item["identifier"].S,
 	}, nil
 }

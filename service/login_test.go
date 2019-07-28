@@ -40,9 +40,36 @@ func TestLogin(t *testing.T) {
 			},
 			expect: service.Login{
 				ID:      "5f46cf19-5399-55e3-aa62-0e7c19382250",
-				Success: true,
 			},
 		},
+		{
+		  register: service.RegisterRequest{
+        Email:    "testfail-login@carpark.ninja",
+        Phone:    "1234567890",
+        Password: "testfail",
+        Verify:   "testfail",
+      },
+      request: service.LoginRequest{
+        Email:    "testfail-login@carpark.ninja",
+        Password: "tester",
+      },
+      expect: service.Login{},
+      err: fmt.Errorf("invalid password"),
+    },
+    {
+      register: service.RegisterRequest{
+        Email:    "testfail-login@carpark.ninja",
+        Phone:    "123456780",
+        Password: "tester",
+        Verify:   "tester",
+      },
+      request: service.LoginRequest{
+        Email:    "testpass@carpark.ninja",
+        Password: "tester",
+      },
+      expect: service.Login{},
+      err: fmt.Errorf("no identity"),
+    },
 	}
 
 	for _, test := range tests {
@@ -52,10 +79,10 @@ func TestLogin(t *testing.T) {
 		}
 
 		response, err := test.request.Login()
-		if err != nil {
-			fmt.Println(fmt.Sprintf("login test err: %v", err))
-		}
-		assert.IsType(t, test.err, err)
+		passed := assert.IsType(t, test.err, err)
+		if !passed {
+      fmt.Println(fmt.Sprintf("login test err: %v", err))
+    }
 		assert.Equal(t, test.expect, response)
 
 		CleanTest(reg.ID)

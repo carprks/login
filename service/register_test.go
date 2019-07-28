@@ -65,14 +65,26 @@ func TestRegister(t *testing.T) {
 				Email: "tester@carpark.ninja",
 			},
 		},
+		{
+		  request: service.RegisterRequest{
+        Email:    "@carpark.ninja",
+        Phone:    "123456789",
+        Password: "tester",
+        Verify:   "tester",
+      },
+      expect: service.Register{},
+      err: fmt.Errorf("invalid format"),
+    },
 	}
 
 	for _, test := range tests {
 		response, err := test.request.Register()
 		if err != nil {
-			fmt.Println(fmt.Sprintf("register test err: %v", err))
 		}
-		assert.IsType(t, test.err, err)
+		passed := assert.IsType(t, test.err, err)
+		if !passed {
+      fmt.Println(fmt.Sprintf("register test err: %v", err))
+    }
 		assert.Equal(t, test.expect, response)
 
 		CleanTest(test.expect.ID)
