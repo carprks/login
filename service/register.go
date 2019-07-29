@@ -7,7 +7,6 @@ import (
   "github.com/aws/aws-sdk-go/aws/awserr"
   "github.com/aws/aws-sdk-go/aws/session"
   "github.com/aws/aws-sdk-go/service/dynamodb"
-  "github.com/badoux/checkmail"
   "os"
 )
 
@@ -15,37 +14,37 @@ func register(body string) (string, error) {
 	r := RegisterRequest{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-    res, err := json.Marshal(Register{
-      Error: err.Error(),
-    })
-    if err != nil {
-      return "", err
-    }
-    return string(res), nil
+		res, err := json.Marshal(Register{
+			Error: err.Error(),
+		})
+		if err != nil {
+			return "", err
+		}
+		return string(res), nil
 	}
 
-  if os.Getenv("DEVELOPMENT") == "" {
-    if r.Email == "tester@carpark.ninja" {
-      res, err := json.Marshal(Register{
-        Error:   fmt.Errorf("tester account not allowed in production").Error(),
-      })
-      if err != nil {
-        return "", err
-      }
-      return string(res), nil
-    }
-  }
+	if os.Getenv("DEVELOPMENT") == "" {
+		if r.Email == "tester@carpark.ninja" {
+			res, err := json.Marshal(Register{
+				Error: fmt.Errorf("tester account not allowed in production").Error(),
+			})
+			if err != nil {
+				return "", err
+			}
+			return string(res), nil
+		}
+	}
 
 	resp, err := r.Register()
-  if err != nil {
-    res, err := json.Marshal(Register{
-      Error: err.Error(),
-    })
-    if err != nil {
-      return "", err
-    }
-    return string(res), nil
-  }
+	if err != nil {
+		res, err := json.Marshal(Register{
+			Error: err.Error(),
+		})
+		if err != nil {
+			return "", err
+		}
+		return string(res), nil
+	}
 
 	res, err := json.Marshal(resp)
 	if err != nil {
@@ -63,6 +62,10 @@ func (r RegisterRequest) Register() (Register, error) {
 		return Register{}, fmt.Errorf("passwords don't match")
 	}
 
+	if r.Email == "" {
+	  return Register{}, fmt.Errorf("missing email address")
+  }
+
 	alreadyExists, err := r.EmailExists()
 	if alreadyExists {
 		return Register{}, fmt.Errorf("email already exists")
@@ -72,10 +75,10 @@ func (r RegisterRequest) Register() (Register, error) {
 		return Register{}, err
 	}
 
-	emailErr := r.emailTest()
+	emailErr := CheckEmail(r.Email)
 	if emailErr != nil {
-	  return Register{}, emailErr
-  }
+		return Register{}, emailErr
+	}
 
 	crypt, err := HashPassword(r.Password)
 	if err != nil {
@@ -176,26 +179,4 @@ func (r RegisterRequest) EmailExists() (bool, error) {
 	}
 
 	return false, nil
-}
-
-func (r RegisterRequest)emailTest() error {
-  err := checkmail.ValidateFormat(r.Email)
-  if err != nil {
-    return err
-  }
-
-  if os.Getenv("DEVELOPMENT") != "" {
-    if r.Email == "tester@carpark.ninja" || r.Email == "testfail-login@carpark.ninja"{
-      return nil
-    }
-  }
-  err = checkmail.ValidateHost(r.Email)
-  if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
-    if serr.Code() == "550" {
-      return fmt.Errorf("invalid email")
-    }
-    return serr
-  }
-
-  return nil
 }

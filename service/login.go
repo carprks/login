@@ -13,41 +13,41 @@ func login(body string) (string, error) {
 	r := LoginRequest{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-    res, err := json.Marshal(Login{
-      Error:   err.Error(),
-    })
-    if err != nil {
-      return "", err
-    }
-    return string(res), nil
+		res, err := json.Marshal(Login{
+			Error: err.Error(),
+		})
+		if err != nil {
+			return "", err
+		}
+		return string(res), nil
 	}
 
 	if os.Getenv("DEVELOPMENT") == "" {
-	  if r.Email == "tester@carpark.ninja" {
-	    res, err := json.Marshal(Login{
-        Error:   fmt.Errorf("tester account not allowed in production").Error(),
-      })
-	    if err != nil {
-	      return "", err
-      }
-	    return string(res), nil
-    }
-  }
+		if r.Email == "tester@carpark.ninja" {
+			res, err := json.Marshal(Login{
+				Error: fmt.Errorf("tester account not allowed in production").Error(),
+			})
+			if err != nil {
+				return "", err
+			}
+			return string(res), nil
+		}
+	}
 
 	resp, err := r.Login()
 	if err != nil {
-    res, err := json.Marshal(Login{
-      Error:   err.Error(),
-    })
-    if err != nil {
-      return "", err
-    }
-    return string(res), nil
+		res, err := json.Marshal(Login{
+			Error: err.Error(),
+		})
+		if err != nil {
+			return "", err
+		}
+		return string(res), nil
 	}
 
 	res, err := json.Marshal(resp)
 	if err != nil {
-	  fmt.Println(fmt.Sprintf("login marshall err: %v", err))
+		fmt.Println(fmt.Sprintf("login marshall err: %v", err))
 		return "", err
 	}
 	return string(res), err
@@ -55,6 +55,11 @@ func login(body string) (string, error) {
 
 // Login ...
 func (r LoginRequest) Login() (Login, error) {
+  err := CheckEmail(r.Email)
+  if err != nil {
+    return Login{}, err
+  }
+
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
@@ -84,6 +89,6 @@ func (r LoginRequest) Login() (Login, error) {
 	}
 
 	return Login{
-		ID:      *result.Item["identifier"].S,
+		ID: *result.Item["identifier"].S,
 	}, nil
 }

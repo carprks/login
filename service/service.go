@@ -1,16 +1,18 @@
 package service
 
 import (
-  "fmt"
-  "github.com/aws/aws-lambda-go/events"
+	"fmt"
+	"github.com/aws/aws-lambda-go/events"
+  "github.com/badoux/checkmail"
   uuid "github.com/satori/go.uuid"
-  "golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
+  "os"
 )
 
 // Login ...
 type Login struct {
-	ID      string `json:"id,omitempty"`
-	Error   string  `json:"error,omitempty"`
+	ID    string `json:"id,omitempty"`
+	Error string `json:"error,omitempty"`
 }
 
 // LoginRequest ...
@@ -22,7 +24,6 @@ type LoginRequest struct {
 // RegisterRequest ...
 type RegisterRequest struct {
 	Email    string `json:"email"`
-	Phone    string `json:"phone"`
 	Password string `json:"password"`
 	Verify   string `json:"verify"`
 	Crypt    string `json:"crypt,-"`
@@ -32,7 +33,7 @@ type RegisterRequest struct {
 type Register struct {
 	ID    string `json:"id,omitempty"`
 	Email string `json:"email,omitempty"`
-	Error string  `json:"error,omitempty"`
+	Error string `json:"error,omitempty"`
 }
 
 // Handler ...
@@ -89,4 +90,31 @@ func CheckPassword(hashedPassword string, plainPassword string) bool {
 func GenerateIdent(email string) string {
 	u := uuid.NewV5(uuid.NamespaceURL, fmt.Sprintf("https://identity.carprk.com/user/%s", email))
 	return u.String()
+}
+
+func CheckEmail(email string) error {
+  err := checkmail.ValidateFormat(email)
+  if err != nil {
+    return err
+  }
+
+  if os.Getenv("DEVELOPMENT") != "" {
+    if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" {
+      return nil
+    }
+  }
+  err = checkmail.ValidateHost(email)
+  if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
+    switch serr.Code() {
+    case "550":
+      return fmt.Errorf("invalid email")
+    case "dia":
+      return fmt.Errorf("invalid email")
+    }
+
+    fmt.Println(fmt.Sprintf("Unknown Code: %v", serr.Code()))
+    return serr
+  }
+
+  return nil
 }

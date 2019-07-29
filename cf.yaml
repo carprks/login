@@ -137,6 +137,9 @@ Resources:
         - StatusCode: 502
           ResponseModels:
             application/json: !Ref EmptyModel
+        - StatusCode: 400
+          ResponseModels:
+            application/json: !Ref EmptyModel
       Integration:
         Type: AWS
         Uri: !Sub
@@ -144,30 +147,38 @@ Resources:
           - {SARN: !GetAtt Service.Arn }
         IntegrationHttpMethod: POST
 
-#  RestAPIVerify:
-#    Type: AWS::ApiGateway::Resource
-#    Properties:
-#      RestApiId: !Ref RestAPI
-#      ParentId: !GetAtt RestAPI.RootResourceId
-#      PathPart: verify
-#  RestAPIVerifyPost:
-#    Type: AWS::ApiGateway::Method
-#    Properties:
-#      RestApiId: !Ref RestAPI
-#      ResourceId: !Ref RestAPIVerify
-#      AuthorizationType: CUSTOM
-#      AuthorizerId: !Ref Authorizer
-#      HttpMethod: POST
-#      RequestParameters:
-#        method.request.header.X-Authorization: true
-#      MethodResponses:
-#        - StatusCode: 200
-#          ResponseModels:
-#            application/json: !Ref EmptyModel
-#      Integration:
-#        Type: AWS_PROXY
-#        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
-#        IntegrationHttpMethod: POST
+  RestAPIVerify:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestAPI
+      ParentId: !GetAtt RestAPI.RootResourceId
+      PathPart: verify
+  RestAPIVerifyPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestAPI
+      ResourceId: !Ref RestAPIVerify
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref Authorizer
+      HttpMethod: POST
+      RequestParameters:
+        method.request.header.X-Authorization: true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: !Ref EmptyModel
+        - StatusCode: 502
+            ResponseModels:
+              application/json: !Ref EmptyModel
+        - StatusCode: 400
+            ResponseModels:
+              application/json: !Ref EmptyModel
+      Integration:
+        Type: AWS
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
+          - {SARN: !GetAtt Service.Arn }
+        IntegrationHttpMethod: POST
 
   RestAPIRegister:
     Type: AWS::ApiGateway::Resource
@@ -190,6 +201,9 @@ Resources:
         - StatusCode: 502
           ResponseModels:
             application/json: !Ref EmptyModel
+        - StatusCode: 400
+            ResponseModels:
+              application/json: !Ref EmptyModel
       Integration:
         Type: AWS
         Uri: !Sub

@@ -32,10 +32,11 @@ func TestHandler(t *testing.T) {
 		expect  events.APIGatewayProxyResponse
 		err     error
 	}{
+	  // Register Tests
 		{
 			request: events.APIGatewayProxyRequest{
-				Resource:   "/register",
-				Body:       `{"email":"tester@carpark.ninja","password":"tester","verify":"tester"}`,
+				Resource: "/register",
+				Body:     `{"email":"tester@carpark.ninja","password":"tester","verify":"tester"}`,
 			},
 			expect: events.APIGatewayProxyResponse{
 				StatusCode: 200,
@@ -43,63 +44,85 @@ func TestHandler(t *testing.T) {
 			},
 		},
 		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/register",
+				Body:     `{"email":"@carpark.ninja","password":"tester","verify":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"invalid format"}`,
+			},
+		},
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/register",
+				Body:     `{"email":"tester@carpark.ninja","password":"tester","verify":"test123"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"passwords don't match"}`,
+			},
+		},
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/register",
+				Body:     `{"email":"testfail-register@carpark.ninja","password":"tester","verify":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"invalid email"}`,
+			},
+		},
+    {
+      request: events.APIGatewayProxyRequest{
+        Resource: "/register",
+        Body:     `{"email":"tester-fail@carpark.ninja","password":"tester"}`,
+      },
+      expect: events.APIGatewayProxyResponse{
+        StatusCode: 200,
+        Body:       `{"error":"passwords don't match"}`,
+      },
+    },
+
+		// Login Tests
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/login",
+				Body:     `{"email":"tester@carpark.ninja","password":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+			},
+		},
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/login",
+				Body:     `{"email":"tester@carpark.ninja","password":"test123"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"invalid password"}`,
+			},
+		},
+		{
 		  request: events.APIGatewayProxyRequest{
-		    Resource: "/register",
-		    Body: `{"email":"@carpark.ninja","password":"tester","verify":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode:        200,
-        Body:              `{"error":"invalid format"}`,
-      },
-    },
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource: "/register",
-        Body: `{"email":"tester@carpark.ninja","password":"tester","verify":"test123"}`,
+		    Resource: "/login",
+		    Body: `{"email":"testfail-login@carpark.ninja", "password":"tester"}`,
       },
       expect: events.APIGatewayProxyResponse{
         StatusCode: 200,
-        Body: `{"error":"passwords don't match"}`,
-      },
-    },
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource: "/register",
-        Body: `{"email":"testfail-register@carpark.ninja","password":"tester","verify":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body: `{"error":"invalid email"}`,
-      },
-    },
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource:   "/login",
-        Body:       `{"email":"tester@carpark.ninja","password":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+        Body: `{"error":"no identity"}`,
       },
     },
     {
       request: events.APIGatewayProxyRequest{
         Resource: "/login",
-        Body: `{"email":"tester@carpark.ninja","password":"test123"}`,
+        Body: `{"email":"@carpark.ninja","password":"tester"}`,
       },
       expect: events.APIGatewayProxyResponse{
         StatusCode: 200,
-        Body: `{"error":"invalid password"}`,
-      },
-    },
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource: "/register",
-        Body: `{"email":"tester-fail@carpark.ninja","password":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body: `{"error":"passwords don't match"}`,
+        Body: `{"error":"invalid format"}`,
       },
     },
 	}
@@ -108,8 +131,8 @@ func TestHandler(t *testing.T) {
 		response, err := service.Handler(test.request)
 		passed := assert.IsType(t, test.err, err)
 		if !passed {
-      fmt.Println(fmt.Sprintf("service test err: %v, request: %v", err, test.request))
-    }
+			fmt.Println(fmt.Sprintf("service test err: %v, request: %v", err, test.request))
+		}
 		assert.Equal(t, test.expect, response)
 
 		s := resp{}
