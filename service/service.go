@@ -9,33 +9,6 @@ import (
   "os"
 )
 
-// Login ...
-type Login struct {
-	ID    string `json:"id,omitempty"`
-	Error string `json:"error,omitempty"`
-}
-
-// LoginRequest ...
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// RegisterRequest ...
-type RegisterRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Verify   string `json:"verify"`
-	Crypt    string `json:"crypt,-"`
-}
-
-// Register ...
-type Register struct {
-	ID    string `json:"id,omitempty"`
-	Email string `json:"email,omitempty"`
-	Error string `json:"error,omitempty"`
-}
-
 // Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// Login

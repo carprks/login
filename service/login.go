@@ -9,6 +9,18 @@ import (
 	"os"
 )
 
+// Login ...
+type Login struct {
+  ID    string `json:"id,omitempty"`
+  Error string `json:"error,omitempty"`
+}
+
+// LoginRequest ...
+type LoginRequest struct {
+  Email    string `json:"email"`
+  Password string `json:"password"`
+}
+
 func login(body string) (string, error) {
 	r := LoginRequest{}
 	err := json.Unmarshal([]byte(body), &r)

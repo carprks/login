@@ -10,6 +10,21 @@ import (
   "os"
 )
 
+// RegisterRequest ...
+type RegisterRequest struct {
+  Email    string `json:"email"`
+  Password string `json:"password"`
+  Verify   string `json:"verify"`
+  Crypt    string `json:"crypt,-"`
+}
+
+// Register ...
+type Register struct {
+  ID    string `json:"id,omitempty"`
+  Email string `json:"email,omitempty"`
+  Error string `json:"error,omitempty"`
+}
+
 func register(body string) (string, error) {
 	r := RegisterRequest{}
 	err := json.Unmarshal([]byte(body), &r)
