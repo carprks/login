@@ -3,7 +3,7 @@ module github.com/carprks/login
 go 1.12
 
 require (
-	github.com/aws/aws-lambda-go v1.12.0
+	github.com/aws/aws-lambda-go v1.12.1
 	github.com/aws/aws-sdk-go v1.22.1
 	github.com/badoux/checkmail v0.0.0-20181210160741-9661bd69e9ad
 	github.com/joho/godotenv v1.3.0
