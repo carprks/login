@@ -1,11 +1,10 @@
 package service
 
 import (
-	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/badoux/checkmail"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"strings"
@@ -16,7 +15,7 @@ func rest() (string, error) {
 }
 
 // Handler ...
-func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
 	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
 
@@ -27,7 +26,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	case "/register":
 		resp, err = register(request.Body)
 
-	case "/delete":
+	case "/remove":
 		resp, err = delete(request.Body)
 	}
 

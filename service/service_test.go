@@ -143,7 +143,7 @@ func TestHandler(t *testing.T) {
 	}
 
 	req := events.APIGatewayProxyRequest{
-		Resource: "/delete",
+		Resource: "/remove",
 		Body:     `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
 	}
 	resp, err := service.Handler(req)
