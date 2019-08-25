@@ -144,7 +144,7 @@ Resources:
         Type: AWS
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn }
+          - {SARN: !GetAtt Service.Arn}
         IntegrationHttpMethod: POST
 
   RestAPIRegister:
@@ -175,7 +175,7 @@ Resources:
         Type: AWS
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn }
+          - {SARN: !GetAtt Service.Arn}
         IntegrationHttpMethod: POST
 
   RestAPIDelete:
@@ -203,7 +203,7 @@ Resources:
         Type: AWS
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn }
+          - {SARN: !GetAtt Service.Arn}
         IntegrationHttpMethod: DELETE
 
   RestAPIDeployment:
@@ -218,6 +218,13 @@ Resources:
       RestApiId: !Ref RestAPI
       StageName: !Ref Stage
       DeploymentId: !Ref RestAPIDeployment
+      MethodSettings:
+        - ResourcePath: /delete
+          HttpMethod: DELETE
+        - ResourcePath: /register
+          HttpMethod: POST
+        - ResourcePath: /login
+          HttpMethod: POST
 
   RestAPIDomainName:
     Type: AWS::ApiGateway::DomainName
