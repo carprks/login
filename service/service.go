@@ -18,6 +18,8 @@ func rest() (string, error) {
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
 	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
+	fmt.Println(fmt.Sprintf("Request Path: %v", request.Path))
+	fmt.Println(fmt.Sprintf("Request Body %v", request.Body))
 
 	switch request.Resource {
 	case "/login":
