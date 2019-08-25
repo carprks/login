@@ -142,10 +142,12 @@ Resources:
             application/json: !Ref EmptyModel
       Integration:
         Type: AWS
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn}
+        Uri: !Sub >-
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
         IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: 200
+          - StatusCode: 502
 
   RestAPIRegister:
     Type: AWS::ApiGateway::Resource
@@ -173,10 +175,12 @@ Resources:
             application/json: !Ref EmptyModel
       Integration:
         Type: AWS
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn}
+        Uri: !Sub >-
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
         IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: 200
+          - StatusCode: 502
 
   RestAPIDelete:
     Type: AWS::ApiGateway::Resource
@@ -204,12 +208,15 @@ Resources:
         Uri: !Sub >-
           arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
         IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: 200
+          - StatusCode: 502
 
   RestAPIDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: RestAPIResourceProbeGet
     Properties:
       RestApiId: !Ref RestAPI
+      StageName: !Ref Stage
 
   RestAPIStage:
     Type: AWS::ApiGateway::Stage
