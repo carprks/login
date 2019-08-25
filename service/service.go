@@ -78,7 +78,7 @@ func CheckEmail(email string) error {
 	}
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
-		fmt.Println(fmt.Sprintf("Code: %v, Err: %v, Error: %v", serr.Code(), serr, serr.Error()))
+		fmt.Println(fmt.Sprintf("Code: %v, Err: %v", serr.Code(), serr))
 
 		if strings.Contains(serr.Error(), "Blocked") {
 			fmt.Println(fmt.Sprintf("Email maybe fake but cant check, not users fault"))
