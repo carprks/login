@@ -144,7 +144,7 @@ func TestHandler(t *testing.T) {
 
 	req := events.APIGatewayProxyRequest{
 		Resource: "/delete",
-		Body: `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+		Body:     `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
 	}
 	resp, err := service.Handler(req)
 	passed := assert.IsType(t, nil, err)
@@ -153,6 +153,6 @@ func TestHandler(t *testing.T) {
 	}
 	assert.Equal(t, events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body: `Deleted`,
+		Body:       `Deleted`,
 	}, resp)
 }
