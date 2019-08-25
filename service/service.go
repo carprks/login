@@ -15,7 +15,7 @@ func rest() (string, error) {
 }
 
 // Handler ...
-func Handler(ctx context.Context, request events.APIGatewayWebsocketProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
 	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
 	fmt.Println(fmt.Sprintf("Request: %v", request))
