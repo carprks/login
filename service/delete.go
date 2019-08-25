@@ -2,7 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"github.com/aws/aws-sdk-go/aws"
+    "fmt"
+    "github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"os"
@@ -12,6 +13,7 @@ import (
 type Delete struct {
 	ID    string `json:"id"`
 	Error string `json:"error,omitempty"`
+	Status string `json:"status,omitempty"`
 }
 
 func delete(body string) (string, error) {
@@ -32,7 +34,13 @@ func delete(body string) (string, error) {
 		return "", err
 	}
 
-	return "Deleted", nil
+	r.Status = "Deleted"
+    res, err := json.Marshal(r)
+    if err != nil {
+        fmt.Println(fmt.Sprintf("delete marshall err: %v", err))
+        return "", err
+    }
+    return string(res), err
 }
 
 // Delete ...
