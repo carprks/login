@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/badoux/checkmail"
@@ -14,10 +15,12 @@ func rest() (string, error) {
 }
 
 // Handler ...
-func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(ctx context.Context, request events.APIGatewayWebsocketProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
 	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
 	fmt.Println(fmt.Sprintf("Request: %v", request))
+	fmt.Println(fmt.Sprintf("Headers: %v", request.Headers))
+	fmt.Println(fmt.Sprintf("Method: %v", request.HTTPMethod))
 
 	switch request.Resource {
 	case "/login":
