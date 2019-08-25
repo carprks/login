@@ -216,7 +216,6 @@ Resources:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref RestAPI
-      StageName: !Ref Stage
 
   RestAPIStage:
     Type: AWS::ApiGateway::Stage
