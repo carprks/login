@@ -7,5 +7,14 @@ if ! type "localstack" > /dev/null; then
 fi
 #STACK=$(SERVICES=dynamodb TMPDIR=private$TMPDIR localstack start --docker)
 
-aws dynamodb delete-table --table-name loginAccounts --endpoint http://docker.devel:4569
-aws dynamodb create-table --table-name loginAccounts --attribute-definitions AttributeName=identifier,AttributeType=S --key-schema AttributeName=identifier,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url http://docker.devel:4569
+aws dynamodb delete-table \
+  --table-name login \
+  --endpoint http://docker.devel:4569
+
+
+aws dynamodb create-table \
+  --table-name login \
+  --attribute-definitions AttributeName=identifier,AttributeType=S \
+  --key-schema AttributeName=identifier,KeyType=HASH \
+  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+  --endpoint-url http://docker.devel:4569

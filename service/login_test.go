@@ -68,20 +68,20 @@ func TestLogin(t *testing.T) {
 			err:    fmt.Errorf("no identity"),
 		},
 		{
-      request: service.LoginRequest{
-        Email:    "@carpark.ninja",
-        Password: "tester",
-      },
-      expect: service.Login{},
-      err: fmt.Errorf("invalid format"),
-    },
+			request: service.LoginRequest{
+				Email:    "@carpark.ninja",
+				Password: "tester",
+			},
+			expect: service.Login{},
+			err:    fmt.Errorf("invalid format"),
+		},
 	}
 
 	for _, test := range tests {
-	  reg := service.Register{}
-	  if test.register.Email != "" {
-      reg, _ = test.register.Register()
-    }
+		reg := service.Register{}
+		if test.register.Email != "" {
+			reg, _ = test.register.Register()
+		}
 
 		response, err := test.request.Login()
 		passed := assert.IsType(t, test.err, err)
@@ -91,7 +91,10 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, test.expect, response)
 
 		if reg.ID != "" {
-      CleanTest(reg.ID)
-    }
+			d := service.Delete{
+				ID: reg.ID,
+			}
+			d.Delete()
+		}
 	}
 }

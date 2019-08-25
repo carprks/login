@@ -32,7 +32,7 @@ func TestHandler(t *testing.T) {
 		expect  events.APIGatewayProxyResponse
 		err     error
 	}{
-	  // Register Tests
+		// Register Tests
 		{
 			request: events.APIGatewayProxyRequest{
 				Resource: "/register",
@@ -73,16 +73,16 @@ func TestHandler(t *testing.T) {
 				Body:       `{"error":"invalid email"}`,
 			},
 		},
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource: "/register",
-        Body:     `{"email":"tester-fail@carpark.ninja","password":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body:       `{"error":"passwords don't match"}`,
-      },
-    },
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/register",
+				Body:     `{"email":"tester-fail@carpark.ninja","password":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"passwords don't match"}`,
+			},
+		},
 
 		// Login Tests
 		{
@@ -106,25 +106,25 @@ func TestHandler(t *testing.T) {
 			},
 		},
 		{
-		  request: events.APIGatewayProxyRequest{
-		    Resource: "/login",
-		    Body: `{"email":"testfail-login@carpark.ninja", "password":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body: `{"error":"no identity"}`,
-      },
-    },
-    {
-      request: events.APIGatewayProxyRequest{
-        Resource: "/login",
-        Body: `{"email":"@carpark.ninja","password":"tester"}`,
-      },
-      expect: events.APIGatewayProxyResponse{
-        StatusCode: 200,
-        Body: `{"error":"invalid format"}`,
-      },
-    },
+			request: events.APIGatewayProxyRequest{
+				Resource: "/login",
+				Body:     `{"email":"testfail-login@carpark.ninja", "password":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"no identity"}`,
+			},
+		},
+		{
+			request: events.APIGatewayProxyRequest{
+				Resource: "/login",
+				Body:     `{"email":"@carpark.ninja","password":"tester"}`,
+			},
+			expect: events.APIGatewayProxyResponse{
+				StatusCode: 200,
+				Body:       `{"error":"invalid format"}`,
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -142,5 +142,17 @@ func TestHandler(t *testing.T) {
 		}
 	}
 
-	CleanTest("5f46cf19-5399-55e3-aa62-0e7c19382250")
+	req := events.APIGatewayProxyRequest{
+		Resource: "/delete",
+		Body: `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+	}
+	resp, err := service.Handler(req)
+	passed := assert.IsType(t, nil, err)
+	if !passed {
+		fmt.Println(fmt.Printf("delete test err: %v, request: %v", err, req))
+	}
+	assert.Equal(t, events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Body: `Deleted`,
+	}, resp)
 }

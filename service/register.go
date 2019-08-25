@@ -1,28 +1,28 @@
 package service
 
 import (
-  "encoding/json"
-  "fmt"
-  "github.com/aws/aws-sdk-go/aws"
-  "github.com/aws/aws-sdk-go/aws/awserr"
-  "github.com/aws/aws-sdk-go/aws/session"
-  "github.com/aws/aws-sdk-go/service/dynamodb"
-  "os"
+	"encoding/json"
+	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"os"
 )
 
 // RegisterRequest ...
 type RegisterRequest struct {
-  Email    string `json:"email"`
-  Password string `json:"password"`
-  Verify   string `json:"verify"`
-  Crypt    string `json:"crypt,-"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Verify   string `json:"verify"`
+	Crypt    string `json:"crypt,-"`
 }
 
 // Register ...
 type Register struct {
-  ID    string `json:"id,omitempty"`
-  Email string `json:"email,omitempty"`
-  Error string `json:"error,omitempty"`
+	ID    string `json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
+	Error string `json:"error,omitempty"`
 }
 
 func register(body string) (string, error) {
@@ -78,8 +78,8 @@ func (r RegisterRequest) Register() (Register, error) {
 	}
 
 	if r.Email == "" {
-	  return Register{}, fmt.Errorf("missing email address")
-  }
+		return Register{}, fmt.Errorf("missing email address")
+	}
 
 	alreadyExists, err := r.EmailExists()
 	if alreadyExists {
@@ -149,7 +149,7 @@ func (r RegisterRequest) Register() (Register, error) {
 	}, nil
 }
 
-// CheckEmail ...
+// EmailExists ...
 func (r RegisterRequest) EmailExists() (bool, error) {
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),

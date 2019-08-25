@@ -2,39 +2,12 @@ package service_test
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/carprks/login/service"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
-
-func CleanTest(ident string) error {
-	s, err := session.NewSession(&aws.Config{
-		Region:   aws.String(os.Getenv("DB_REGION")),
-		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
-	})
-	if err != nil {
-		return err
-	}
-	svc := dynamodb.New(s)
-	_, err = svc.DeleteItem(&dynamodb.DeleteItemInput{
-		Key: map[string]*dynamodb.AttributeValue{
-			"identifier": {
-				S: aws.String(ident),
-			},
-		},
-		TableName: aws.String(os.Getenv("DB_TABLE")),
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func TestRegister(t *testing.T) {
 	if len(os.Args) >= 1 {
@@ -85,6 +58,9 @@ func TestRegister(t *testing.T) {
 		}
 		assert.Equal(t, test.expect, response)
 
-		CleanTest(test.expect.ID)
+		d := service.Delete{
+			ID: test.expect.ID,
+		}
+		d.Delete()
 	}
 }

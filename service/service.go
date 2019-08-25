@@ -3,43 +3,39 @@ package service
 import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-  "github.com/badoux/checkmail"
-  uuid "github.com/satori/go.uuid"
+	"github.com/badoux/checkmail"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
-  "os"
+	"os"
 )
+
+func rest() (string, error) {
+	return "", nil
+}
 
 // Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// Login
-	if request.Resource == "/login" {
-		resp, err := login(request.Body)
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
+	resp, err := rest()
 
-		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
-			Body:       resp,
-		}, nil
+	switch request.Resource {
+	case "/login":
+		resp, err = login(request.Body)
+
+	case "/register":
+		resp, err = register(request.Body)
+
+	case "/delete":
+		resp, err = delete(request.Body)
 	}
 
-	// Register
-	if request.Resource == "/register" {
-		resp, err := register(request.Body)
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
-			Body:       resp,
-		}, nil
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
 	}
 
-	// Return the message
+	// Default
 	return events.APIGatewayProxyResponse{
-		StatusCode: 400,
+		StatusCode: 200,
+		Body:       resp,
 	}, nil
 }
 
@@ -65,29 +61,30 @@ func GenerateIdent(email string) string {
 	return u.String()
 }
 
+// CheckEmail ...
 func CheckEmail(email string) error {
-  err := checkmail.ValidateFormat(email)
-  if err != nil {
-    return err
-  }
+	err := checkmail.ValidateFormat(email)
+	if err != nil {
+		return err
+	}
 
-  if os.Getenv("DEVELOPMENT") != "" {
-    if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" {
-      return nil
-    }
-  }
-  err = checkmail.ValidateHost(email)
-  if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
-    switch serr.Code() {
-    case "550":
-      return fmt.Errorf("invalid email")
-    case "dia":
-      return fmt.Errorf("invalid email")
-    }
+	if os.Getenv("DEVELOPMENT") != "" {
+		if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" {
+			return nil
+		}
+	}
+	err = checkmail.ValidateHost(email)
+	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
+		switch serr.Code() {
+		case "550":
+			return fmt.Errorf("invalid email")
+		case "dia":
+			return fmt.Errorf("invalid email")
+		}
 
-    fmt.Println(fmt.Sprintf("Unknown Code: %v", serr.Code()))
-    return serr
-  }
+		fmt.Println(fmt.Sprintf("Unknown Code: %v", serr.Code()))
+		return serr
+	}
 
-  return nil
+	return nil
 }

@@ -11,14 +11,14 @@ import (
 
 // Login ...
 type Login struct {
-  ID    string `json:"id,omitempty"`
-  Error string `json:"error,omitempty"`
+	ID    string `json:"id,omitempty"`
+	Error string `json:"error,omitempty"`
 }
 
 // LoginRequest ...
 type LoginRequest struct {
-  Email    string `json:"email"`
-  Password string `json:"password"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func login(body string) (string, error) {
@@ -67,10 +67,10 @@ func login(body string) (string, error) {
 
 // Login ...
 func (r LoginRequest) Login() (Login, error) {
-  err := CheckEmail(r.Email)
-  if err != nil {
-    return Login{}, err
-  }
+	err := CheckEmail(r.Email)
+	if err != nil {
+		return Login{}, err
+	}
 
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
