@@ -191,7 +191,7 @@ Resources:
       ResourceId: !Ref RestAPIDelete
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
-      HttpMethod: DELETE
+      HttpMethod: POST
       MethodResponses:
         - StatusCode: 200
           ResponseModels:
@@ -201,9 +201,8 @@ Resources:
             application/json: !Ref EmptyModel
       Integration:
         Type: AWS
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SARN}/invocations
-          - {SARN: !GetAtt Service.Arn}
+        Uri: !Sub >-
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
         IntegrationHttpMethod: POST
 
   RestAPIDeployment:
