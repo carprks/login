@@ -18,9 +18,6 @@ func rest() (string, error) {
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
 	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
-	fmt.Println(fmt.Sprintf("Request: %v", request))
-	fmt.Println(fmt.Sprintf("Headers: %v", request.Headers))
-	fmt.Println(fmt.Sprintf("Method: %v", request.HTTPMethod))
 
 	switch request.Resource {
 	case "/login":
@@ -80,6 +77,8 @@ func CheckEmail(email string) error {
 	}
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
+		fmt.Println(fmt.Sprintf("Code: %v, Err: %v", serr.Code(), serr))
+
 		switch serr.Code() {
 		case "550":
 			return fmt.Errorf("invalid email")
