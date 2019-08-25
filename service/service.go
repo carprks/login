@@ -8,6 +8,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strings"
 )
 
 func rest() (string, error) {
@@ -77,7 +78,12 @@ func CheckEmail(email string) error {
 	}
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
-		fmt.Println(fmt.Sprintf("Code: %v, Err: %v", serr.Code(), serr))
+		fmt.Println(fmt.Sprintf("Code: %v, Err: %v, Error: %v", serr.Code(), serr, serr.Error()))
+
+		if strings.Contains(serr.Error(), "Blocked") {
+			fmt.Println(fmt.Sprintf("Email maybe fake but cant check, not users fault"))
+			return nil
+		}
 
 		switch serr.Code() {
 		case "550":
