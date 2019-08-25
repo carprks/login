@@ -218,13 +218,6 @@ Resources:
       RestApiId: !Ref RestAPI
       StageName: !Ref Stage
       DeploymentId: !Ref RestAPIDeployment
-      MethodSettings:
-        - ResourcePath: /delete
-          HttpMethod: DELETE
-        - ResourcePath: /register
-          HttpMethod: POST
-        - ResourcePath: /login
-          HttpMethod: POST
 
   RestAPIDomainName:
     Type: AWS::ApiGateway::DomainName

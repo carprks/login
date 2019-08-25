@@ -32,6 +32,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	if err != nil {
+		fmt.Println(fmt.Sprintf("%v Err: %v", request.Resource, err))
 		return events.APIGatewayProxyResponse{}, err
 	}
 
