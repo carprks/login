@@ -81,15 +81,9 @@ func CheckEmail(email string) error {
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
 		fmt.Println(fmt.Sprintf("Code: %v, Err: %v", serr.Code(), serr))
-
-		if strings.Contains(serr.Error(), "Blocked") {
-			fmt.Println(fmt.Sprintf("Email maybe fake but cant check, not users fault"))
-			return nil
-		}
-
 		switch serr.Code() {
 		case "550":
-			return fmt.Errorf("invalid email")
+			return blockedCheck(serr.Error())
 		case "dia":
 			return fmt.Errorf("invalid email")
 		}
@@ -99,4 +93,16 @@ func CheckEmail(email string) error {
 	}
 
 	return nil
+}
+
+func blockedCheck(err string) error {
+	if strings.Contains(err, "Blocked") {
+		fmt.Println(fmt.Sprintf("Email maybe fake but cant check blocked, not users fault"))
+		return nil
+	} else if strings.Contains(err, "Spamhaus") {
+		fmt.Println(fmt.Sprintf("Email maybe fake but cant check due to spamhaus, not users fault"))
+		return nil
+	}
+
+	return fmt.Errorf("invalid email")
 }
