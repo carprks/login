@@ -195,7 +195,7 @@ Resources:
       ResourceId: !Ref RestAPIRemove
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
-      HttpMethod: POST
+      HttpMethod: DELETE
       MethodResponses:
         - StatusCode: 200
           ResponseModels:
@@ -207,7 +207,7 @@ Resources:
         Type: AWS
         Uri: !Sub >-
           arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Service.Arn}/invocations
-        IntegrationHttpMethod: POST
+        IntegrationHttpMethod: DELETE
         IntegrationResponses:
           - StatusCode: 200
           - StatusCode: 502
@@ -309,10 +309,26 @@ Resources:
         S3Bucket: !Ref BuildBucket
         S3Key: !Ref BuildKey
 
-  ServiceInvoke:
+  ServiceInvokeLogin:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !GetAtt Service.Arn
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/*/*
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/POST/login
+
+  ServiceInvokeRegister:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt Service.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/POST/register
+
+  ServiceInvokeRemove:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt Service.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*/DELETE/remove
