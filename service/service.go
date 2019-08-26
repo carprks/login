@@ -85,7 +85,7 @@ func CheckEmail(email string) error {
 		case "550":
 			return blockedCheck(serr.Error())
 		case "dia":
-			return fmt.Errorf("invalid email")
+			return fmt.Errorf("timeout err")
 		}
 
 		fmt.Println(fmt.Sprintf("Unknown Code: %v", serr.Code()))
