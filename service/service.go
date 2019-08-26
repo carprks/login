@@ -17,9 +17,6 @@ func rest() (string, error) {
 // Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	resp, err := rest()
-	fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
-	fmt.Println(fmt.Sprintf("Request Path: %v", request.Path))
-	fmt.Println(fmt.Sprintf("Request Body %v", request.Body))
 
 	switch request.Resource {
 	case "/login":
@@ -28,13 +25,18 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	case "/register":
 		resp, err = register(request.Body)
 
-	case "/remove":
+	case "/delete":
 		resp, err = delete(request.Body)
 	}
 
 	if err != nil {
 		fmt.Println(fmt.Sprintf("%v Err: %v", request.Resource, err))
 		return events.APIGatewayProxyResponse{}, err
+	}
+
+	if len(resp) == 0 {
+		fmt.Println(fmt.Sprintf("Request Resource: %v", request.Resource))
+		fmt.Println(fmt.Sprintf("Request Body %v", request.Body))
 	}
 
 	// Default

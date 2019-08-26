@@ -70,7 +70,7 @@ func TestHandler(t *testing.T) {
 			},
 			expect: events.APIGatewayProxyResponse{
 				StatusCode: 200,
-				Body:       `{"error":"invalid email"}`,
+				Body:       `{"error":"timeout err"}`,
 			},
 		},
 		{
@@ -122,7 +122,7 @@ func TestHandler(t *testing.T) {
 			},
 			expect: events.APIGatewayProxyResponse{
 				StatusCode: 200,
-				Body:       `{"error":"invalid format"}`,
+				Body:       `{"error":"no identity"}`,
 			},
 		},
 	}
@@ -143,7 +143,7 @@ func TestHandler(t *testing.T) {
 	}
 
 	req := events.APIGatewayProxyRequest{
-		Resource: "/remove",
+		Resource: "/delete",
 		Body:     `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
 	}
 	resp, err := service.Handler(req)
@@ -153,6 +153,6 @@ func TestHandler(t *testing.T) {
 	}
 	assert.Equal(t, events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       `Deleted`,
+		Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250","status":"Deleted"}`,
 	}, resp)
 }

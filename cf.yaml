@@ -182,17 +182,17 @@ Resources:
           - StatusCode: 200
           - StatusCode: 502
 
-  RestAPIRemove:
+  RestAPIDelete:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref RestAPI
       ParentId: !GetAtt RestAPI.RootResourceId
-      PathPart: remove
-  RestAPIRemovePost:
+      PathPart: delete
+  RestAPIDeleteDelete:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref RestAPI
-      ResourceId: !Ref RestAPIRemove
+      ResourceId: !Ref RestAPIDelete
       AuthorizationType: CUSTOM
       AuthorizerId: !Ref Authorizer
       HttpMethod: DELETE
