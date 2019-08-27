@@ -11,9 +11,9 @@ import (
 
 // Delete ...
 type Delete struct {
-	ID     string `json:"id"`
-	Error  string `json:"error,omitempty"`
-	Status string `json:"status,omitempty"`
+	Identifier string `json:"identifier"`
+	Error      string `json:"error,omitempty"`
+	Status     string `json:"status,omitempty"`
 }
 
 func delete(body string) (string, error) {
@@ -56,7 +56,7 @@ func (d Delete) Delete() error {
 	_, err = svc.DeleteItem(&dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"identifier": {
-				S: aws.String(d.ID),
+				S: aws.String(d.Identifier),
 			},
 		},
 		TableName: aws.String(os.Getenv("DB_TABLE")),

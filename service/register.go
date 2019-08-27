@@ -20,9 +20,9 @@ type RegisterRequest struct {
 
 // Register ...
 type Register struct {
-	ID    string `json:"id,omitempty"`
-	Email string `json:"email,omitempty"`
-	Error string `json:"error,omitempty"`
+	Identifier string `json:"identifier,omitempty"`
+	Email      string `json:"email,omitempty"`
+	Error      string `json:"error,omitempty"`
 }
 
 func register(body string) (string, error) {
@@ -144,8 +144,8 @@ func (r RegisterRequest) Register() (Register, error) {
 	}
 
 	return Register{
-		ID:    GenerateIdent(r.Email),
-		Email: r.Email,
+		Identifier: GenerateIdent(r.Email),
+		Email:      r.Email,
 	}, nil
 }
 

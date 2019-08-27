@@ -33,7 +33,7 @@ func TestDelete_Delete(t *testing.T) {
 				Verify:   "tester",
 			},
 			request: service.Delete{
-				ID: "5f46cf19-5399-55e3-aa62-0e7c19382250",
+				Identifier: "5f46cf19-5399-55e3-aa62-0e7c19382250",
 			},
 			expect: nil,
 		},

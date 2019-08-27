@@ -33,8 +33,8 @@ func TestRegister(t *testing.T) {
 				Verify:   "tester",
 			},
 			expect: service.Register{
-				ID:    "5f46cf19-5399-55e3-aa62-0e7c19382250",
-				Email: "tester@carpark.ninja",
+				Identifier: "5f46cf19-5399-55e3-aa62-0e7c19382250",
+				Email:      "tester@carpark.ninja",
 			},
 		},
 		{
@@ -59,7 +59,7 @@ func TestRegister(t *testing.T) {
 		assert.Equal(t, test.expect, response)
 
 		d := service.Delete{
-			ID: test.expect.ID,
+			Identifier: test.expect.Identifier,
 		}
 		d.Delete()
 	}

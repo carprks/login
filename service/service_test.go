@@ -12,7 +12,7 @@ import (
 )
 
 type resp struct {
-	ID string `json:"id"`
+	Identifier string `json:"identifier"`
 }
 
 func TestHandler(t *testing.T) {
@@ -40,7 +40,7 @@ func TestHandler(t *testing.T) {
 			},
 			expect: events.APIGatewayProxyResponse{
 				StatusCode: 200,
-				Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250","email":"tester@carpark.ninja"}`,
+				Body:       `{"identifier":"5f46cf19-5399-55e3-aa62-0e7c19382250","email":"tester@carpark.ninja"}`,
 			},
 		},
 		{
@@ -92,7 +92,7 @@ func TestHandler(t *testing.T) {
 			},
 			expect: events.APIGatewayProxyResponse{
 				StatusCode: 200,
-				Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+				Body:       `{"identifier":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
 			},
 		},
 		{
@@ -144,7 +144,7 @@ func TestHandler(t *testing.T) {
 
 	req := events.APIGatewayProxyRequest{
 		Resource: "/delete",
-		Body:     `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
+		Body:     `{"identifier":"5f46cf19-5399-55e3-aa62-0e7c19382250"}`,
 	}
 	resp, err := service.Handler(req)
 	passed := assert.IsType(t, nil, err)
@@ -153,6 +153,6 @@ func TestHandler(t *testing.T) {
 	}
 	assert.Equal(t, events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       `{"id":"5f46cf19-5399-55e3-aa62-0e7c19382250","status":"Deleted"}`,
+		Body:       `{"identifier":"5f46cf19-5399-55e3-aa62-0e7c19382250","status":"Deleted"}`,
 	}, resp)
 }

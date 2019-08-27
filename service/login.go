@@ -11,8 +11,8 @@ import (
 
 // Login ...
 type Login struct {
-	ID    string `json:"id,omitempty"`
-	Error string `json:"error,omitempty"`
+	Identifier string `json:"identifier,omitempty"`
+	Error      string `json:"error,omitempty"`
 }
 
 // LoginRequest ...
@@ -101,6 +101,6 @@ func (r LoginRequest) Login() (Login, error) {
 	}
 
 	return Login{
-		ID: *result.Item["identifier"].S,
+		Identifier: *result.Item["identifier"].S,
 	}, nil
 }
