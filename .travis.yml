@@ -19,6 +19,8 @@ install:
   - pip install --user awscli
 script:
   - go mod download
+  - go get -u golang.org/x/lint/golint
+  - golint -set_exit_status ./...
   - go build .
 after_script:
   - zip $TRAVIS_BUILD_ID.zip $SERVICE_NAME
