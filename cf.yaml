@@ -148,6 +148,7 @@ Resources:
         IntegrationResponses:
           - StatusCode: 200
           - StatusCode: 502
+          - StatusCode: 400
 
   RestAPIRegister:
     Type: AWS::ApiGateway::Resource
@@ -181,6 +182,7 @@ Resources:
         IntegrationResponses:
           - StatusCode: 200
           - StatusCode: 502
+          - StatusCode: 400
 
   RestAPIDelete:
     Type: AWS::ApiGateway::Resource
