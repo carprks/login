@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/aws/aws-lambda-go v1.13.1
-	github.com/aws/aws-sdk-go v1.23.15
+	github.com/aws/aws-sdk-go v1.23.16
 	github.com/badoux/checkmail v0.0.0-20181210160741-9661bd69e9ad
 	github.com/joho/godotenv v1.3.0
 	github.com/satori/go.uuid v1.2.0
