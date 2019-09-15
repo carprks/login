@@ -9,6 +9,36 @@ import (
 	"testing"
 )
 
+var testsDelete = []struct {
+	name    string
+	create  service.RegisterRequest
+	request service.Delete
+	expect  error
+}{
+	{
+		name: "success",
+		create: service.RegisterRequest{
+			Email:    "test-delete-success@carpark.ninja",
+			Password: "tester",
+			Verify:   "tester",
+		},
+		request: service.Delete{
+			Identifier: "8340d46a-b9ba-5dff-9e21-b39a942a9f98",
+		},
+	},
+	{
+		name: "failed",
+		create: service.RegisterRequest{
+			Email:    "test-delete-failure@carpark.ninja",
+			Password: "tester",
+			Verify:   "tester",
+		},
+		request: service.Delete{
+			Identifier: "df00ec88-8868-5633-90d3-dff567a12929",
+		},
+	},
+}
+
 func TestDelete_Delete(t *testing.T) {
 	if len(os.Args) >= 1 {
 		for _, env := range os.Args {
@@ -21,31 +51,55 @@ func TestDelete_Delete(t *testing.T) {
 		}
 	}
 
-	tests := []struct {
-		create  service.RegisterRequest
-		request service.Delete
-		expect  error
-	}{
-		{
-			create: service.RegisterRequest{
-				Email:    "tester@carpark.ninja",
-				Password: "tester",
-				Verify:   "tester",
-			},
-			request: service.Delete{
-				Identifier: "5f46cf19-5399-55e3-aa62-0e7c19382250",
-			},
-			expect: nil,
-		},
+	for _, test := range testsDelete {
+		t.Run(test.name, func(t *testing.T) {
+			test.create.Register()
+
+			response := test.request.Delete()
+			passed := assert.IsType(t, test.expect, response)
+			if !passed {
+				t.Errorf("register type test err: %w", response)
+			}
+			passed = assert.Equal(t, test.expect, response)
+			if !passed {
+				t.Errorf("register equal test err: %w", response)
+			}
+		})
+	}
+}
+
+func BenchmarkDelete_Delete(b *testing.B) {
+	b.ReportAllocs()
+
+	if len(os.Args) >= 1 {
+		for _, env := range os.Args {
+			if env == "localDev" {
+				err := godotenv.Load()
+				if err != nil {
+					fmt.Println(fmt.Sprintf("godotenv err: %v", err))
+				}
+			}
+		}
 	}
 
-	for _, test := range tests {
-		test.create.Register()
+	b.ResetTimer()
+	for _, test := range testsDelete {
+		b.Run(test.name, func(b *testing.B) {
+			b.StopTimer()
 
-		response := test.request.Delete()
-		passed := assert.IsType(t, test.expect, response)
-		if !passed {
-			fmt.Println(fmt.Sprintf("register test err: %v", response))
-		}
+			test.create.Register()
+
+			response := test.request.Delete()
+			passed := assert.IsType(b, test.expect, response)
+			if !passed {
+				b.Errorf("register type test err: %w", response)
+			}
+			passed = assert.Equal(b, test.expect, response)
+			if !passed {
+				b.Errorf("register equal test err: %w", response)
+			}
+
+			b.StartTimer()
+		})
 	}
 }

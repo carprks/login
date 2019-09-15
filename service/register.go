@@ -72,6 +72,15 @@ func register(body string) (string, error) {
 
 // Register ...
 func (r RegisterRequest) Register() (Register, error) {
+	go HashPassword(r.Password)
+
+	// crypt, err := HashPassword(r.Password)
+	// if err != nil {
+	// 	fmt.Println(fmt.Sprintf("crypt password: %v", err))
+	// 	return Register{}, err
+	// }
+	// r.Crypt = crypt
+
 	// check the passwords are the same
 	if r.Password != r.Verify {
 		return Register{}, fmt.Errorf("passwords don't match")
@@ -95,11 +104,7 @@ func (r RegisterRequest) Register() (Register, error) {
 		return Register{}, emailErr
 	}
 
-	crypt, err := HashPassword(r.Password)
-	if err != nil {
-		fmt.Println(fmt.Sprintf("crypt password: %v", err))
-		return Register{}, err
-	}
+	crypt := <-EncPass
 	r.Crypt = crypt
 
 	s, err := session.NewSession(&aws.Config{

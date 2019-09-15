@@ -9,7 +9,37 @@ import (
 	"testing"
 )
 
-func TestRegister(t *testing.T) {
+var testsRegister = []struct {
+	name    string
+	request service.RegisterRequest
+	expect  service.Register
+	err     error
+}{
+	{
+		name: "success",
+		request: service.RegisterRequest{
+			Email:    "test-register-success@carpark.ninja",
+			Password: "tester",
+			Verify:   "tester",
+		},
+		expect: service.Register{
+			Identifier: "5358c467-3930-5d9a-a818-126c5a5c007f",
+			Email:      "test-register-success@carpark.ninja",
+		},
+	},
+	{
+		name: "invalid format",
+		request: service.RegisterRequest{
+			Email:    "@carpark.ninja",
+			Password: "tester",
+			Verify:   "tester",
+		},
+		expect: service.Register{},
+		err:    fmt.Errorf("invalid format"),
+	},
+}
+
+func TestRegisterRequest_Register(t *testing.T) {
 	if len(os.Args) >= 1 {
 		for _, env := range os.Args {
 			if env == "localDev" {
@@ -21,46 +51,61 @@ func TestRegister(t *testing.T) {
 		}
 	}
 
-	tests := []struct {
-		request service.RegisterRequest
-		expect  service.Register
-		err     error
-	}{
-		{
-			request: service.RegisterRequest{
-				Email:    "tester@carpark.ninja",
-				Password: "tester",
-				Verify:   "tester",
-			},
-			expect: service.Register{
-				Identifier: "5f46cf19-5399-55e3-aa62-0e7c19382250",
-				Email:      "tester@carpark.ninja",
-			},
-		},
-		{
-			request: service.RegisterRequest{
-				Email:    "@carpark.ninja",
-				Password: "tester",
-				Verify:   "tester",
-			},
-			expect: service.Register{},
-			err:    fmt.Errorf("invalid format"),
-		},
+	for _, test := range testsRegister {
+		t.Run(test.name, func(t *testing.T) {
+			response, err := test.request.Register()
+			passed := assert.IsType(t, test.err, err)
+			if !passed {
+				t.Errorf("register type err: %w", err)
+			}
+			passed = assert.Equal(t, test.expect, response)
+			if !passed {
+				t.Errorf("register equal: %v, %v", test.expect, response)
+			}
+
+			d := service.Delete{
+				Identifier: test.expect.Identifier,
+			}
+			d.Delete()
+		})
+	}
+}
+
+func BenchmarkRegisterRequest_Register(b *testing.B) {
+	b.ReportAllocs()
+
+	if len(os.Args) >= 1 {
+		for _, env := range os.Args {
+			if env == "localDev" {
+				err := godotenv.Load()
+				if err != nil {
+					fmt.Println(fmt.Sprintf("godotenv err: %v", err))
+				}
+			}
+		}
 	}
 
-	for _, test := range tests {
-		response, err := test.request.Register()
-		if err != nil {
-		}
-		passed := assert.IsType(t, test.err, err)
-		if !passed {
-			fmt.Println(fmt.Sprintf("register test err: %v", err))
-		}
-		assert.Equal(t, test.expect, response)
+	b.ResetTimer()
+	for _, test := range testsRegister {
+		b.Run(test.name, func(b *testing.B) {
+			b.StopTimer()
 
-		d := service.Delete{
-			Identifier: test.expect.Identifier,
-		}
-		d.Delete()
+			response, err := test.request.Register()
+			passed := assert.IsType(b, test.err, err)
+			if !passed {
+				b.Errorf("register type test err: %w", err)
+			}
+			passed = assert.Equal(b, test.expect, response)
+			if !passed {
+				b.Errorf("register equal test: %v, %v", test.expect, resp{})
+			}
+
+			d := service.Delete{
+				Identifier: test.expect.Identifier,
+			}
+			d.Delete()
+
+			b.StartTimer()
+		})
 	}
 }

@@ -67,11 +67,6 @@ func login(body string) (string, error) {
 
 // Login ...
 func (r LoginRequest) Login() (Login, error) {
-	// err := CheckEmail(r.Email)
-	// if err != nil {
-	// 	return Login{}, err
-	// }
-
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),

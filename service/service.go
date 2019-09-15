@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+// EncPass Encoded Password
+var EncPass = make(chan string)
+
 func rest() (string, error) {
 	return "", nil
 }
@@ -53,12 +56,15 @@ func HashPassword(p string) (string, error) {
 		fmt.Println(fmt.Sprintf("Hash err: %v", err))
 		return "", err
 	}
+
+	EncPass <- string(r)
 	return string(r), err
 }
 
 // CheckPassword ...
 func CheckPassword(hashedPassword string, plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
+	// 4fmt.Println(fmt.Sprintf("CheckPassword -- Password: %s, Err: %v", plainPassword, err))
 	return err == nil
 }
 
@@ -76,9 +82,12 @@ func CheckEmail(email string) error {
 	}
 
 	if os.Getenv("DEVELOPMENT") != "" {
-		if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" {
+		if strings.Contains(email, "test") {
 			return nil
 		}
+		// if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" || email == "tester-success@carpark.ninja" {
+		// 	return nil
+		// }
 	}
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {
