@@ -76,6 +76,10 @@ func GenerateIdent(email string) string {
 
 // CheckEmail ...
 func CheckEmail(email string) error {
+	if len(email) <= 2 {
+		return fmt.Errorf("check email: email invalid")
+	}
+
 	err := checkmail.ValidateFormat(email)
 	if err != nil {
 		return err
@@ -85,9 +89,6 @@ func CheckEmail(email string) error {
 		if strings.Contains(email, "test") {
 			return nil
 		}
-		// if email == "tester@carpark.ninja" || email == "testfail-login@carpark.ninja" || email == "tester-success@carpark.ninja" {
-		// 	return nil
-		// }
 	}
 	err = checkmail.ValidateHost(email)
 	if serr, ok := err.(checkmail.SmtpError); ok && err != nil {

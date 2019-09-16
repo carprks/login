@@ -45,6 +45,10 @@ func delete(body string) (string, error) {
 
 // Delete ...
 func (d Delete) Delete() error {
+	if len(d.Identifier) <= 2 {
+		return fmt.Errorf("delete invalid identifier")
+	}
+
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),

@@ -67,6 +67,10 @@ func login(body string) (string, error) {
 
 // Login ...
 func (r LoginRequest) Login() (Login, error) {
+	if len(r.Email) <= 2 {
+		return Login{}, fmt.Errorf("login invalid email")
+	}
+
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),

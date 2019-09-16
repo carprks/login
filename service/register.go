@@ -156,6 +156,10 @@ func (r RegisterRequest) Register() (Register, error) {
 
 // EmailExists ...
 func (r RegisterRequest) EmailExists() (bool, error) {
+	if len(r.Email) <= 2 {
+		return false, fmt.Errorf("email exists: invalid email")
+	}
+
 	s, err := session.NewSession(&aws.Config{
 		Region:   aws.String(os.Getenv("DB_REGION")),
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
