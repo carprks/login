@@ -107,6 +107,8 @@ github.com/aws/aws-sdk-go v1.24.4 h1:te5/T3qKtk6gFQUvdOJukVYX2zIUBVpJJ2tYiF3qM/s
 github.com/aws/aws-sdk-go v1.24.4/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.24.5 h1:dSJz1gwqww5GT5NQGjgCLo8ihzCOAvcSQsilsTED+fY=
 github.com/aws/aws-sdk-go v1.24.5/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.24.6 h1:QmBKT5yfcWuMz6+n53YFl6uiaTCSjhcEk1I5jIRU+uU=
+github.com/aws/aws-sdk-go v1.24.6/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/badoux/checkmail v0.0.0-20181210160741-9661bd69e9ad h1:kXfVkP8xPSJXzicomzjECcw6tv1Wl9h1lNenWBfNKdg=
 github.com/badoux/checkmail v0.0.0-20181210160741-9661bd69e9ad/go.mod h1:r5ZalvRl3tXevRNJkwIB6DC4DD3DMjIlY9NEU1XGoaQ=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
