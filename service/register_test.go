@@ -66,7 +66,10 @@ func TestRegisterRequest_Register(t *testing.T) {
 			d := service.Delete{
 				Identifier: test.expect.Identifier,
 			}
-			d.Delete()
+			err = d.Delete()
+			if err != nil {
+				t.Errorf("register delete: %w", err)
+			}
 		})
 	}
 }
@@ -103,7 +106,10 @@ func BenchmarkRegisterRequest_Register(b *testing.B) {
 			d := service.Delete{
 				Identifier: test.expect.Identifier,
 			}
-			d.Delete()
+			err = d.Delete()
+			if err != nil {
+				b.Errorf("register delete: %w", err)
+			}
 
 			b.StartTimer()
 		})

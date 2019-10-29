@@ -53,7 +53,10 @@ func TestDelete_Delete(t *testing.T) {
 
 	for _, test := range testsDelete {
 		t.Run(test.name, func(t *testing.T) {
-			test.create.Register()
+			_, err := test.create.Register()
+			if err != nil {
+				t.Errorf("register create: %w", err)
+			}
 
 			response := test.request.Delete()
 			passed := assert.IsType(t, test.expect, response)
@@ -62,7 +65,7 @@ func TestDelete_Delete(t *testing.T) {
 			}
 			passed = assert.Equal(t, test.expect, response)
 			if !passed {
-				t.Errorf("register equal test err: %w", response)
+				t.Errorf("register equal test err: %v", response)
 			}
 		})
 	}
@@ -87,7 +90,10 @@ func BenchmarkDelete_Delete(b *testing.B) {
 		b.Run(test.name, func(b *testing.B) {
 			b.StopTimer()
 
-			test.create.Register()
+			_, err := test.create.Register()
+			if err != nil {
+				b.Errorf("register create: %w", err)
+			}
 
 			response := test.request.Delete()
 			passed := assert.IsType(b, test.expect, response)
@@ -96,7 +102,7 @@ func BenchmarkDelete_Delete(b *testing.B) {
 			}
 			passed = assert.Equal(b, test.expect, response)
 			if !passed {
-				b.Errorf("register equal test err: %w", response)
+				b.Errorf("register equal test err: %v", response)
 			}
 
 			b.StartTimer()

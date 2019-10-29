@@ -15,7 +15,7 @@ type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Verify   string `json:"verify"`
-	Crypt    string `json:"crypt,-"`
+	Crypt    string `json:"crypt"`
 }
 
 // Register ...
@@ -73,13 +73,6 @@ func register(body string) (string, error) {
 // Register ...
 func (r RegisterRequest) Register() (Register, error) {
 	go HashPassword(r.Password)
-
-	// crypt, err := HashPassword(r.Password)
-	// if err != nil {
-	// 	fmt.Println(fmt.Sprintf("crypt password: %v", err))
-	// 	return Register{}, err
-	// }
-	// r.Crypt = crypt
 
 	// check the passwords are the same
 	if r.Password != r.Verify {
