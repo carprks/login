@@ -50,15 +50,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 // HashPassword ...
-func HashPassword(p string) (string, error) {
+func HashPassword(p string) {
 	r, err := bcrypt.GenerateFromPassword([]byte(p), 10)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Hash err: %v", err))
-		return "", err
+		return
 	}
 
 	EncPass <- string(r)
-	return string(r), err
 }
 
 // CheckPassword ...

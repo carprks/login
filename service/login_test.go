@@ -92,18 +92,21 @@ func TestLoginRequest_Login(t *testing.T) {
 			response, err := test.request.Login()
 			passed := assert.IsType(t, test.err, err)
 			if !passed {
-				t.Errorf("login type test err: %w, %w", err, test.err)
+				t.Errorf("login type test err: %w, %v", err, test.err)
 			}
 			passed = assert.Equal(t, test.expect, response)
 			if !passed {
-				t.Errorf("login equal test err: %v, %w", err, test.err)
+				t.Errorf("login equal test err: %w, %v", err, test.err)
 			}
 
 			if reg.Identifier != "" {
 				d := service.Delete{
 					Identifier: reg.Identifier,
 				}
-				d.Delete()
+				err = d.Delete()
+				if err != nil {
+					t.Errorf("login delete: %w", err)
+				}
 			}
 		})
 	}
@@ -136,18 +139,21 @@ func BenchmarkLoginRequest_Login(b *testing.B) {
 			response, err := test.request.Login()
 			passed := assert.IsType(b, test.err, err)
 			if !passed {
-				b.Errorf("login type test err: %w, %w", err, test.err)
+				b.Errorf("login type test err: %w, %v", err, test.err)
 			}
 			passed = assert.Equal(b, test.expect, response)
 			if !passed {
-				b.Errorf("login equal test err: %v, %w", err, test.err)
+				b.Errorf("login equal test err: %w, %v", err, test.err)
 			}
 
 			if reg.Identifier != "" {
 				d := service.Delete{
 					Identifier: reg.Identifier,
 				}
-				d.Delete()
+				err = d.Delete()
+				if err != nil {
+					b.Errorf("login delete: %w", err)
+				}
 			}
 
 			b.StartTimer()
